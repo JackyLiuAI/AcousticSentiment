@@ -37,24 +37,32 @@ class Trainer:
         
         # 创建模型
         if self.config["model_type"] == "lstm":
-            self.model = LSTMModel(
+            model = LSTMModel(
                 input_dim=self.config["input_dim"],
                 hidden_dim=self.config["hidden_dim"],
                 num_layers=self.config["num_layers"],
                 num_classes=6,
                 dropout=self.config["dropout"]
-            ).to(self.device)
+            )
         else:
-            self.model = TransformerModel(
+            model = TransformerModel(
                 input_dim=self.config["input_dim"],
                 num_heads=self.config["num_heads"],
                 num_layers=self.config["num_layers"],
                 num_classes=6,
                 dropout=self.config["dropout"]
-            ).to(self.device)
+            )
+        
+        # 使用DataParallel包装模型
+        if torch.cuda.device_count() > 1:
+            print(f"Using {torch.cuda.device_count()} GPUs!")
+            model = nn.DataParallel(model)
+        
+        self.model = model.to(self.device)
         
         # 优化器和损失函数
-        self.optimizer = self.model.get_optimizer(
+        # 当使用DataParallel时，需要通过.module访问原始模型的方法
+        self.optimizer = self.model.module.get_optimizer(
             lr=float(self.config["lr"]),
             weight_decay=float(self.config["weight_decay"])
         )
@@ -146,7 +154,7 @@ class Trainer:
         # 保存最佳模型
         if valid_acc > self.best_valid_acc:
             self.best_valid_acc = valid_acc
-            torch.save(self.model.state_dict(), f"./weights/best_model_{self.config['model_type']}.pth")
+            torch.save(self.model.state_dict(), f"./weights/best_model_{self.config['model_type']}_lr{self.config['lr']}_maxl{self.config['max_length']}.pth")
             print(f"New best model saved with valid acc: {valid_acc:.4f}")
         
         return avg_loss, valid_acc
@@ -162,7 +170,7 @@ class Trainer:
     
     def evaluate(self, model_path=None):
         if model_path:
-            self.model.load(model_path)
+            self.model.load_state_dict(torch.load(model_path, weights_only=True))
         
         self.model.eval()
         all_preds = []
@@ -210,4 +218,4 @@ class Trainer:
 if __name__ == "__main__":
     trainer = Trainer()
     trainer.train()
-    trainer.evaluate(f"./weights/best_model_{trainer.config['model_type']}.pth")
+    trainer.evaluate(f"./weights/best_model_{trainer.config['model_type']}_lr{trainer.config['lr']}_maxl{trainer.config['max_length']}.pth")

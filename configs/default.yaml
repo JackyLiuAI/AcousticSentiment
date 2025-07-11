@@ -15,8 +15,8 @@ num_heads: 8
 num_layers: 4
 
 # 训练配置
-batch_size: 32
-epochs: 2
+batch_size: 128
+epochs: 200
 lr: 1e-4
 weight_decay: 1e-4
 dropout: 0.3
