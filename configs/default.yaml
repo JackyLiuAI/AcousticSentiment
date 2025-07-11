@@ -1,0 +1,22 @@
+experiment_name: "ser_experiment"
+model_type: "transformer"  # "lstm" or "transformer"
+
+# 数据配置
+sr: 16000
+max_length: 400  # 最大序列长度
+input_dim: 768   # Wav2Vec特征维度
+
+# LSTM配置
+hidden_dim: 256
+num_layers: 2
+
+# Transformer配置
+num_heads: 8
+num_layers: 4
+
+# 训练配置
+batch_size: 32
+epochs: 2
+lr: 1e-4
+weight_decay: 1e-4
+dropout: 0.3

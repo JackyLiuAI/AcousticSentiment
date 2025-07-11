@@ -1,0 +1,9 @@
+weights/
+
+assets/
+
+logs/
+
+*.pyc
+
+__pycache__/
