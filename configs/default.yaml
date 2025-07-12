@@ -11,12 +11,12 @@ hidden_dim: 256
 num_layers: 2
 
 # Transformer配置
-num_heads: 8
-num_layers: 4
+num_heads: 12
+num_layers: 6
 
 # 训练配置
-batch_size: 32
-epochs: 2
-lr: 1e-4
-weight_decay: 1e-4
+batch_size: 16
+epochs: 100
+lr: 1e-5
+weight_decay: 1e-5
 dropout: 0.3

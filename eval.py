@@ -37,7 +37,8 @@ class Evaluator:
         
         # 加载模型权重
         if model_path:
-            self.model.load(model_path)
+            state_dict = torch.load(model_path, map_location=self.device)
+            self.model.load_state_dict(state_dict, strict=False)
         
         # 准备数据
         self.data_manager = DataManager()
@@ -92,10 +93,9 @@ class Evaluator:
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Confusion Matrix")
-        plt.savefig(f"./assets/confusion_matrix_{self.config['model_type']}.png")
+        plt.savefig(f"./assets/{self.config['model_type']}_lr{self.config['lr']}_epo{self.config['epochs']}_ml{self.config['max_length']}_h{self.config['num_heads']}_l{self.config['num_layers']}_bs{self.config['batch_size']}_wd{self.config['weight_decay']}_do{self.config['dropout']}.png")
         plt.close()
 
 if __name__ == "__main__":
-    # 示例使用
-    evaluator = Evaluator(model_path="./weights/best_model_lstm.pth")
+    evaluator = Evaluator(model_path=f"weights/transformer_lr1e-5_epo1_ml400_h4_l2_bs32_wd1e-5_do0.3.pth")
     evaluator.evaluate()

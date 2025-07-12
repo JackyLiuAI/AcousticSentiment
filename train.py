@@ -146,7 +146,7 @@ class Trainer:
         # 保存最佳模型
         if valid_acc > self.best_valid_acc:
             self.best_valid_acc = valid_acc
-            torch.save(self.model.state_dict(), f"./weights/best_model_{self.config['model_type']}.pth")
+            torch.save(self.model.state_dict(), f"./weights/{self.config['model_type']}_lr{self.config['lr']}_epo{self.config['epochs']}_ml{self.config['max_length']}_h{self.config['num_heads']}_l{self.config['num_layers']}_bs{self.config['batch_size']}_wd{self.config['weight_decay']}_do{self.config['dropout']}.pth")
             print(f"New best model saved with valid acc: {valid_acc:.4f}")
         
         return avg_loss, valid_acc
@@ -204,10 +204,10 @@ class Trainer:
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Confusion Matrix")
-        plt.savefig(f"./assets/confusion_matrix_{self.config['model_type']}.png")
+        plt.savefig(f"./assets/{self.config['model_type']}_lr{self.config['lr']}_epo{self.config['epochs']}_ml{self.config['max_length']}_h{self.config['num_heads']}_l{self.config['num_layers']}_bs{self.config['batch_size']}_wd{self.config['weight_decay']}_do{self.config['dropout']}.png")
         plt.close()
 
 if __name__ == "__main__":
     trainer = Trainer()
     trainer.train()
-    trainer.evaluate(f"./weights/best_model_{trainer.config['model_type']}.pth")
+    trainer.evaluate(f"./weights/{trainer.config['model_type']}_lr{trainer.config['lr']}_epo{trainer.config['epochs']}_ml{trainer.config['max_length']}_h{trainer.config['num_heads']}_l{trainer.config['num_layers']}_bs{trainer.config['batch_size']}_wd{trainer.config['weight_decay']}_do{trainer.config['dropout']}.pth")
